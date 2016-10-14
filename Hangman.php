@@ -53,7 +53,7 @@ class Hangman{
         $this->pt2 = ' <<<';
 
         $letter = $_REQUEST['letter'];
-        if(strcasecmp(implode("", $this->checkWord()), $this->word) !== 0 && $this->wrongAttempts === 6){
+        // if(strcasecmp(implode("", $this->checkWord()), $this->word) !== 0 && $this->wrongAttempts === 6){
             $this->usedLetters[] = $letter;
             $this->wrongAttempts;
 
@@ -63,15 +63,8 @@ class Hangman{
             "LET'S DO THIS", " <<<");
         }
 
-        else if(stripos($this->word, $letter) !== false && $this->wrongAttempts < 6
-        && strcasecmp(implode("", $this->checkWord()), $this->word) !== 0){
-            if(in_array($letter, $this->usedLetters)){
-                $this->render("You have already chose that letter!", implode(" ", $this->checkWord()),
-                "Choose another letter from the list below...", implode(" ", $this->destroyLink()),
-                "Here are the letters you tried:", implode(" ", $this->usedLetters), $this->pt1,
-                $this->link, $this->pt2);
-
-            }
+        // else if(stripos($this->word, $letter) !== false && $this->wrongAttempts < 6
+        // && strcasecmp(implode("", $this->checkWord()), $this->word) !== 0){
             else{
                 $this->usedLetters[] = $letter;
 
@@ -84,29 +77,20 @@ class Hangman{
         }
 
         else if($this->wrongAttempts < 6 && strcasecmp(implode("", $this->checkWord()), $this->word) !== 0){
-            if(in_array($letter, $this->usedLetters)){
-                $this->render("You have already chose that letter!", implode(" ", $this->checkWord()),
+            $this->usedLetters[] = $letter;
+            $this->wrongAttempts += 1;
+
+            if($this->wrongAttempts === 6){
+                $this->render("You lost the game!", implode(" ", $this->checkWord()),
+                "The hidden word is shown above was: $this->word",
+                null,"Here are the letters you tried:", implode(" ", $this->usedLetters), "Wanna play again? Click here! >>>",
+                "LET'S DO THIS", " <<<");
+            }
+            else{
+                $this->render("The letter you chose was not found. Try again!", implode(" ", $this->checkWord()),
                 "Choose another letter from the list below...", implode(" ", $this->destroyLink()),
                 "Here are the letters you tried:", implode(" ", $this->usedLetters), $this->pt1,
                 $this->link, $this->pt2);
-
-            }
-            else {
-                $this->usedLetters[] = $letter;
-                $this->wrongAttempts += 1;
-
-                if($this->wrongAttempts === 6){
-                    $this->render("You lost the game!", implode(" ", $this->checkWord()),
-                    "The hidden word is shown above was: $this->word",
-                    null,"Here are the letters you tried:", implode(" ", $this->usedLetters), "Wanna play again? Click here! >>>",
-                    "LET'S DO THIS", " <<<");
-                }
-                else{
-                    $this->render("The letter you chose was not found. Try again!", implode(" ", $this->checkWord()),
-                    "Choose another letter from the list below...", implode(" ", $this->destroyLink()),
-                    "Here are the letters you tried:", implode(" ", $this->usedLetters), $this->pt1,
-                    $this->link, $this->pt2);
-                }
             }
         }
 
@@ -153,6 +137,20 @@ class Hangman{
         }
 
         return $this->place_holder;
+    }
+
+    //function to check conditions and return state of game
+    function checkGame(){
+        $check = implode("", $this->checkWord());
+
+        if(strcasecmp($checked, $this->word) !== 0){
+            if($this->wrongAttempts === 6){
+                return "lost";
+            }
+            else if(stripos($this->word, $letter) !== false && $this->wrongAttempts < 6){
+                return "found";
+            }
+        }
     }
 
     //deleting links as they're chosen and recreate alphabet links list
