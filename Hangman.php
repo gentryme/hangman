@@ -2,15 +2,14 @@
 class Hangman{
     private $word;
     private $wrongAttempts;
-    private $letterLinks = [];
 
     //running game temlate variables
-    private $greeting;
-    private $blanksShow;
-    private $linksList;
-    private $response;
-    private $usedList;
-    private $used_header;
+    // private $greeting;
+    // private $blanksShow;
+    // private $linksList;
+    // private $response;
+    // private $usedList;
+    // private $used_header;
 
     //new game template variables
     private $link;
@@ -20,6 +19,7 @@ class Hangman{
     //arrays
     private $usedLetters = [];
     private $place_holder = [];
+    private $letterLinks = [];
 
     //constants
     const PLACEHOLDER = "_";
@@ -37,10 +37,13 @@ class Hangman{
 
     //initial rendering info when starting a new game
     function initital(){
-        $this->greeting = 'Welcome to Hangman';
-        $this->blanksShow = implode(" ", $this->blanks());
-        $this->linksList = implode(" ", $this->alphabetList());
-        $this->response = 'Choose a letter from the list below...';
+        // $this->greeting = 'Welcome to Hangman';
+        // $this->blanksShow = implode(" ", $this->blanks());
+        // $this->linksList = implode(" ", $this->alphabetList());
+        // $this->response = 'Choose a letter from the list below...';
+
+        $this->render("Welcome to Hangman", implode(" ", $this->blanks()),
+        "Choose a letter from the list below...", implode(" ", $this->alphabetList()));
     }
 
     //actually runs the game
@@ -51,87 +54,68 @@ class Hangman{
 
         $letter = $_REQUEST['letter'];
         if(strcasecmp(implode("", $this->checkWord()), $this->word) !== 0 && $this->wrongAttempts === 6){
-            $this->greeting = 'You lost the game!';
-            $this->response = "The hidden word was: $this->word";
-            $this->used_header = 'Here are the letters you tried: ';
             $this->usedLetters[] = $letter;
-            $this->usedList = implode(" ", $this->usedLetters);
-            //newGame
-            $this->pt1 = 'Wanna play again? Click here! >>> ';
-            $this->link = "LET'S DO THIS";
-            $this->pt2 = ' <<<';
             $this->wrongAttempts;
+
+            $this->render("You lost the game!", implode(" ", $this->checkWord()),
+            "The hidden word is shown above was: $this->word",
+            null,"Here are the letters you tried:", implode(" ", $this->usedLetters), "Wanna play again? Click here! >>>",
+            "LET'S DO THIS", " <<<");
         }
 
         else if(stripos($this->word, $letter) !== false && $this->wrongAttempts < 6
         && strcasecmp(implode("", $this->checkWord()), $this->word) !== 0){
             if(in_array($letter, $this->usedLetters)){
-                $this->greeting = 'You have already chose that letter!';
-                $this->linksList = implode(" ", $this->destroyLink());
-                $this->response = 'Choose another letter from the list below...';
-                $this->blanksShow = implode(" ", $this->checkWord());
-                $this->used_header = 'Here are the letters you have tried so far: ';
-                $this->usedList = implode(" ", $this->usedLetters);
+                $this->render("You have already chose that letter!", implode(" ", $this->checkWord()),
+                "Choose another letter from the list below...", implode(" ", $this->destroyLink()),
+                "Here are the letters you tried:", implode(" ", $this->usedLetters), $this->pt1,
+                $this->link, $this->pt2);
 
             }
             else{
-                $this->greeting = 'The letter you chose was found in the word!';
-                $this->linksList = implode(" ", $this->destroyLink());
-                $this->response = 'Choose another letter from the list below...';
-                $this->blanksShow = implode(" ", $this->checkWord());
-                $this->used_header = 'Here are the letters you have tried so far: ';
                 $this->usedLetters[] = $letter;
-                $this->usedList = implode(" ", $this->usedLetters);
+
+                $this->render("The letter you chose was found in the word!", implode(" ", $this->checkWord()),
+                "Choose another letter from the list below...", implode(" ", $this->destroyLink()),
+                "Here are the letters you tried:", implode(" ", $this->usedLetters), $this->pt1,
+                $this->link, $this->pt2);
 
             }
         }
 
         else if($this->wrongAttempts < 6 && strcasecmp(implode("", $this->checkWord()), $this->word) !== 0){
             if(in_array($letter, $this->usedLetters)){
-                $this->greeting = 'You have already chose that letter!';
-                $this->linksList = implode(" ", $this->destroyLink());
-                $this->response = 'Choose another letter from the list below...';
-                $this->blanksShow = implode(" ", $this->checkWord());
-                $this->used_header = 'Here are the letters you have tried so far: ';
-                $this->usedList = implode(" ", $this->usedLetters);
+                $this->render("You have already chose that letter!", implode(" ", $this->checkWord()),
+                "Choose another letter from the list below...", implode(" ", $this->destroyLink()),
+                "Here are the letters you tried:", implode(" ", $this->usedLetters), $this->pt1,
+                $this->link, $this->pt2);
 
             }
             else {
-                $this->greeting = 'The letter you chose was not found. Try again!';
-                $this->linksList = implode(" ", $this->destroyLink());
-                $this->response = 'Choose a letter from the list below...';
-                $this->blanksShow = implode(" ", $this->checkWord());
-                $this->used_header = 'Here are the letters you have tried so far: ';
                 $this->usedLetters[] = $letter;
-                $this->usedList = implode(" ", $this->usedLetters);
                 $this->wrongAttempts += 1;
 
-                if(strcasecmp(implode("", $this->checkWord()), $this->word) !== 0 && $this->wrongAttempts === 6){
-                    $this->greeting = 'You lost the game!';
-                    $this->response = "The hidden word was: $this->word";
-                    $this->used_header = 'Here are the letters you tried: ';
-                    $this->usedLetters[] = $letter;
-                    $this->usedList = implode(" ", $this->usedLetters);
-                    //newGame
-                    $this->pt1 = 'Wanna play again? Click here! >>> ';
-                    $this->link = "LET'S DO THIS";
-                    $this->pt2 = ' <<<';
-                    $this->wrongAttempts;
+                if($this->wrongAttempts === 6){
+                    $this->render("You lost the game!", implode(" ", $this->checkWord()),
+                    "The hidden word is shown above was: $this->word",
+                    null,"Here are the letters you tried:", implode(" ", $this->usedLetters), "Wanna play again? Click here! >>>",
+                    "LET'S DO THIS", " <<<");
+                }
+                else{
+                    $this->render("The letter you chose was not found. Try again!", implode(" ", $this->checkWord()),
+                    "Choose another letter from the list below...", implode(" ", $this->destroyLink()),
+                    "Here are the letters you tried:", implode(" ", $this->usedLetters), $this->pt1,
+                    $this->link, $this->pt2);
                 }
             }
         }
 
         else{
-            $this->greeting = 'You won!';
-            $this->response = 'The hidden word is shown above.';
-            $this->blanksShow = implode(" ", $this->checkWord());
-            $this->used_header = "Here are the letters you tried: ";
             $this->usedLetters[] = $letter;
-            $this->usedList = implode(" ", $this->usedLetters);
-            //newGame
-            $this->pt1 = 'Wanna play again? Click here! >>> ';
-            $this->link = "LET'S DO THIS";
-            $this->pt2 = ' <<<';
+
+            $this->render("You won!", implode(" ", $this->checkWord()), "The hidden word is shown above.", null,
+            "Here are the letters you tried:", implode(" ", $this->usedLetters), "Wanna play again? Click here! >>>",
+            "LET'S DO THIS", " <<<");
         }
     }
 
@@ -200,19 +184,20 @@ class Hangman{
         return $this->usedLetters;
     }
 
-    //render the game
-    function render(){
-        $template['GREETING'] = $this->greeting;
-        $template['RESPONSE'] = $this->response;
+    //function to render template vars
+    function render($greeting, $blanksShow, $response, $linksList, $used_header = null, $usedList = null, $pt1 = null, $link = null,
+    $pt2 = null){
+        $template['GREETING'] = $greeting;
+        $template['RESPONSE'] = $response;
         $template['IMG_SRC'] =
         "http://localhost/phpwebsite/mod/hangman/img/hang$this->wrongAttempts.gif";
-        $template['BLANKS_WORD'] = $this->blanksShow;
-        $template['ALPHABET'] = $this->linksList;
-        $template['USED'] = $this->usedList;
-        $template['USED_HEADER'] = $this->used_header;
-        $template['LINK'] = $this->link;
-        $template['PT1'] = $this->pt1;
-        $template['PT2'] = $this->pt2;
+        $template['BLANKS_WORD'] = $blanksShow;
+        $template['ALPHABET'] = $linksList;
+        $template['USED'] = $usedList;
+        $template['USED_HEADER'] = $used_header;
+        $template['LINK'] = $link;
+        $template['PT1'] = $pt1;
+        $template['PT2'] = $pt2;
 
         echo PHPWS_Template::process($template, 'hangman','game.tpl');
     }

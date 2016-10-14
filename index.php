@@ -25,7 +25,7 @@ else{
     $game->initital();
 }
 saveGame($game);
-$game->render();
+//$game->render();
 
 //makes the game
 function makeGame(){
