@@ -110,20 +110,16 @@ class Hangman{
     //function to check conditions and return state of game
     function checkGame($letter){
         $check = implode("", $this->checkWord());
-        if($this->wrongAttempts === 6){
+        if($this->wrongAttempts === 6)
             return "lost";
-        }
         else if(strcasecmp($check, $this->word) !== 0){
-            if($this->wrongAttempts < 6 && stripos($this->word, $letter) !== false){
+            if($this->wrongAttempts < 6 && stripos($this->word, $letter) !== false)
                 return "found";
-            }
-            else{
+            else
                 return "not found";
-            }
         }
-        else{
+        else
             return "won";
-        }
     }
 
     //deleting links as they're chosen and recreate alphabet links list
