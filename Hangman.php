@@ -39,7 +39,6 @@ class Hangman{
         $letter = $_REQUEST['letter'];
         if($this->checkGame($letter) === "lost"){
             $this->usedLetters[] = $letter;
-            $this->wrongAttempts;
             $this->render("You lost the game!", implode(" ", $this->checkWord()),
             "The hidden word is shown above was: $this->word",
             null,"Here are the letters you tried:", implode(" ", $this->usedLetters), "Wanna play again? Click here! >>>",
